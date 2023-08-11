@@ -16,19 +16,22 @@ import java.util.Map;
 @Service
 @AllArgsConstructor
 public class XmlWorker implements Worker {
-
-    private final static String PATH = "src/main/resources/WP_PL.xml";
-
     private final Parser parser;
     private final EDI_DC40Repository ediDc40Repository;
 
     @Override
     @Transactional
-    public String parseAndPush() {
-        Map<String, EDI_DC40> map = parser.parseEDI_DC40(Paths.get(PATH));
+    public List<EDI_DC40> parseAndPush(String path) {
+        List<EDI_DC40> listEntitiesToSave = parser.parseEDI_DC40(Paths.get(path));
 
-        List<EDI_DC40> ediDc40s = ediDc40Repository.saveAll(new ArrayList<>(map.values()));
+        ediDc40Repository.saveAll(listEntitiesToSave);
 
-        return ediDc40s.get(0).getDOCNUM();
+        return listEntitiesToSave;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EDI_DC40> findAllMhdhbLessThan50() {
+        return ediDc40Repository.findAllMhdhbLessThan50();
     }
 }

@@ -3,9 +3,9 @@ package com.example.parser.parser;
 import com.example.parser.entity.EDI_DC40;
 
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.List;
 
 public interface Parser {
 
-    Map<String, EDI_DC40> parseEDI_DC40(Path path);
+    List<EDI_DC40> parseEDI_DC40(Path path);
 }

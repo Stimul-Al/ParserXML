@@ -4,15 +4,18 @@ server:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    password: Fktrctq<F,fitd
-    url: jdbc:postgresql://localhost:5432/Parse
-    username: aliakseibabashau
+    password: ${DB_PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
 
   jpa:
     show-sql: true
     properties:
       hibernate:
+        jdbc:
+          batch_size: 100
         dialect: org.hibernate.dialect.SQLServerDialect
         format_sql: true
+        order_updates: true
     hibernate:
       ddl-auto: create

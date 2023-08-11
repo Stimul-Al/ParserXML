@@ -10,57 +10,57 @@ import javax.persistence.*;
 public class E1WPA01 {
 
     @Id
-    @Column(name = "FILIALE")
+    @Column(name = EntityName.FILIALE)
     private String FILIALE;
 
-    @Column(name = "AENDKENNZ")
+    @Column(name = EntityName.AENDKENNZ)
     private String AENDKENNZ;
 
-    @Column(name = "AKTIVDATUM")
+    @Column(name = EntityName.AKTIVDATUM)
     private String AKTIVDATUM;
 
-    @Column(name = "AENDDATUM")
+    @Column(name = EntityName.AENDDATUM)
     private String AENDDATUM;
 
-    @Column(name = "HAUPTEAN")
+    @Column(name = EntityName.HAUPTEAN)
     private String HAUPTEAN;
 
-    @Column(name = "ARTIKELNR")
+    @Column(name = EntityName.ARTIKELNR)
     private String ARTIKELNR;
 
-    @Column(name = "POSME")
+    @Column(name = EntityName.POSME)
     private String POSME;
 
-    @Column(name = "WARENGR")
+    @Column(name = EntityName.WARENGR)
     private String WARENGR;
 
-    @Column(name = "VERPGEW")
+    @Column(name = EntityName.VERPGEW)
     private String VERPGEW;
 
-    @Column(name = "RABERLAUBT")
+    @Column(name = EntityName.RABERLAUBT)
     private String RABERLAUBT;
 
-    @Column(name = "PRDRUCK")
+    @Column(name = EntityName.PRDRUCK)
     private String PRDRUCK;
 
-    @Column(name = "ARTIKANZ")
+    @Column(name = EntityName.ARTIKANZ)
     private String ARTIKANZ;
 
-    @Column(name = "MHDHB")
-    private String MHDHB;
+    @Column(name = EntityName.MHDHB)
+    private Integer MHDHB;
 
-    @Column(name = "QUALARTTXT")
+    @Column(name = EntityName.QUALARTTXT)
     private String QUALARTTXT;
 
-    @Column(name = "SPRASCODE")
+    @Column(name = EntityName.SPRASCODE)
     private String SPRASCODE;
 
-    @Column(name = "TEXT")
+    @Column(name = EntityName.TEXT)
     private String TEXT;
 
-    @Column(name = "LFDNR")
+    @Column(name = EntityName.LFDNR)
     private String LFDNR;
 
-    @OneToOne(mappedBy = "RCVPRN")
+    @OneToOne(mappedBy = EntityName.RCVPRN)
     private EDI_DC40 ediDc40;
 }

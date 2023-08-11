@@ -2,7 +2,10 @@ package com.example.parser.parser;
 
 import com.example.parser.entity.E1WPA01;
 import com.example.parser.entity.EDI_DC40;
+import com.example.parser.entity.EntityName;
 import com.example.parser.util.StaxStreamProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.xml.stream.XMLStreamException;
@@ -19,12 +22,15 @@ import static javax.xml.stream.XMLStreamConstants.*;
 @Component
 public class ParserImpl implements Parser {
 
+    private final Logger logger = LoggerFactory.getLogger(ParserImpl.class);
+
     private XMLStreamReader reader;
 
     @Override
-    public Map<String, EDI_DC40> parseEDI_DC40(Path path) {
-        Map<String, EDI_DC40> ediDc40s = new HashMap<>();
-        List<E1WPA01> e1WPA01s = new ArrayList<>();
+    public List<EDI_DC40> parseEDI_DC40(Path path) {
+        Map<String, EDI_DC40> edidc40Map = new HashMap<>();
+        List<EDI_DC40> ediDc40MapWithNullForeignKey = new ArrayList<>();
+        List<E1WPA01> e1wpa01List = new ArrayList<>();
 
         E1WPA01 e1WPA01 = new E1WPA01();
         EDI_DC40 ediDc40 = new EDI_DC40();
@@ -43,7 +49,11 @@ public class ParserImpl implements Parser {
                 if (eventType == END_ELEMENT && reader.getName().getLocalPart().equals("EDI_DC40")) {
                         EDI_DC40 ediDc40ToSave = ediDc40;
 
-                        ediDc40s.put(ediDc40ToSave.getRCVPRN().getFILIALE(), ediDc40ToSave);
+                        if(ediDc40ToSave.getRCVPRN().getFILIALE().isEmpty()) {  // we add entity to the list if it HAS empty field RCVPRN
+                            ediDc40MapWithNullForeignKey.add(ediDc40ToSave);
+                        } else {                                                // we add entity to the map if it HAS NOT empty field RCVPRN
+                            edidc40Map.put(ediDc40ToSave.getRCVPRN().getFILIALE(), ediDc40ToSave);
+                        }
 
                         ediDc40 = new EDI_DC40();
                 }
@@ -51,7 +61,7 @@ public class ParserImpl implements Parser {
                 if (eventType == END_ELEMENT && reader.getName().getLocalPart().equals("E1WPA01")) {
                         E1WPA01 e1WPA01ToSave = e1WPA01;
 
-                        e1WPA01s.add(e1WPA01ToSave);
+                        e1wpa01List.add(e1WPA01ToSave);
 
                         e1WPA01 = new E1WPA01();
                 }
@@ -60,114 +70,119 @@ public class ParserImpl implements Parser {
             throw new RuntimeException(e);
         }
 
-        for (E1WPA01 e : e1WPA01s) {
-            ediDc40s.get(e.getFILIALE()).setRCVPRN(e);
+        for (E1WPA01 e : e1wpa01List) {
+            if(edidc40Map.containsKey(e.getFILIALE())) {
+                edidc40Map.get(e.getFILIALE()).setRCVPRN(e);
+            } else {
+                logger.info("Entity has empty FILIALE field");
+            }
+
         }
 
-        return ediDc40s;
+        return getListToSave(edidc40Map, ediDc40MapWithNullForeignKey);
     }
 
     private void parseElement(EDI_DC40 ediDc40, E1WPA01 e1WPA01) throws XMLStreamException {
         int eventType;
 
         switch (reader.getName().getLocalPart()) {
-            case "TABNAM":
+            case EntityName.TABNAM:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setTABNAM(reader.getText());
                 }
                 break;
-            case "MANDT":
+            case EntityName.MANDT:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setMANDT(reader.getText());
                 }
                 break;
-            case "DOCNUM":
+            case EntityName.DOCNUM:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setDOCNUM(reader.getText());
                 }
                 break;
-            case "DOCREL":
+            case EntityName.DOCREL:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setDOCREL(reader.getText());
                 }
                 break;
-            case "STATUS":
+            case EntityName.STATUS:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setSTATUS(reader.getText());
                 }
                 break;
-            case "DIRECT":
+            case EntityName.DIRECT:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setDIRECT(reader.getText());
                 }
                 break;
-            case "OUTMOD":
+            case EntityName.OUTMOD:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setOUTMOD(reader.getText());
                 }
                 break;
-            case "IDOCTYP":
+            case EntityName.DOCTYP:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
-                    ediDc40.setIDOCTYP(reader.getText());
+                    ediDc40.setDOCTYP(reader.getText());
                 }
                 break;
-            case "MESTYP":
+            case EntityName.MESTYP:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setMESTYP(reader.getText());
                 }
                 break;
-            case "SNDPOR":
+            case EntityName.SNDPOR:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setSNDPOR(reader.getText());
                 }
                 break;
-            case "RCVPRT":
+            case EntityName.RCVPRT:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setRCVPRT(reader.getText());
                 }
                 break;
-            case "SNDPRN":
+            case EntityName.SNDPRN:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setSNDPRN(reader.getText());
                 }
                 break;
-            case "SNDPRT":
+            case EntityName.SNDPRT:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setSNDPRT(reader.getText());
                 }
                 break;
-            case "CREDAT":
+            case EntityName.CREDAT:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setCREDAT(reader.getText());
                 }
                 break;
-            case "CRETIM":
+            case EntityName.CRETIM:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setCRETIM(reader.getText());
                 }
                 break;
-            case "SERIAL":
+            case EntityName.SERIAL:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     ediDc40.setSERIAL(reader.getText());
                 }
                 break;
-            case "RCVPRN":
+            case EntityName.RCVPRN:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     E1WPA01 e1WPA011 = new E1WPA01();
@@ -176,108 +191,117 @@ public class ParserImpl implements Parser {
                     ediDc40.setRCVPRN(e1WPA011);
                 }
                 break;
-            case "FILIALE":
+            case EntityName.FILIALE:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setFILIALE(reader.getText());
                 }
                 break;
-            case "AENDKENNZ":
+            case EntityName.AENDKENNZ:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setAENDKENNZ(reader.getText());
                 }
                 break;
-            case "AKTIVDATUM":
+            case EntityName.AKTIVDATUM:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setAKTIVDATUM(reader.getText());
                 }
                 break;
-            case "AENDDATUM":
+            case EntityName.AENDDATUM:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setAENDDATUM(reader.getText());
                 }
                 break;
-            case "HAUPTEAN":
+            case EntityName.HAUPTEAN:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setHAUPTEAN(reader.getText());
                 }
                 break;
-            case "ARTIKELNR":
+            case EntityName.ARTIKELNR:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setARTIKELNR(reader.getText());
                 }
                 break;
-            case "POSME":
+            case EntityName.POSME:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setPOSME(reader.getText());
                 }
                 break;
-            case "WARENGR":
+            case EntityName.WARENGR:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setWARENGR(reader.getText());
                 }
                 break;
-            case "VERPGEW":
+            case EntityName.VERPGEW:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setVERPGEW(reader.getText());
                 }
                 break;
-            case "RABERLAUBT":
+            case EntityName.RABERLAUBT:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setRABERLAUBT(reader.getText());
                 }
                 break;
-            case "PRDRUCK":
+            case EntityName.PRDRUCK:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setPRDRUCK(reader.getText());
                 }
                 break;
-            case "ARTIKANZ":
+            case EntityName.ARTIKANZ:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setARTIKANZ(reader.getText());
                 }
                 break;
-            case "MHDHB":
+            case EntityName.MHDHB:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
-                    e1WPA01.setMHDHB(reader.getText());
+                    e1WPA01.setMHDHB(Integer.parseInt(reader.getText()));
                 }
                 break;
-            case "QUALARTTXT":
+            case EntityName.QUALARTTXT:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setQUALARTTXT(reader.getText());
                 }
                 break;
-            case "SPRASCODE":
+            case EntityName.SPRASCODE:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setSPRASCODE(reader.getText());
                 }
                 break;
-            case "TEXT":
+            case EntityName.TEXT:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setTEXT(reader.getText());
                 }
                 break;
-            case "LFDNR":
+            case EntityName.LFDNR:
                 eventType = reader.next();
                 if (eventType == CHARACTERS) {
                     e1WPA01.setLFDNR(reader.getText());
                 }
                 break;
         }
+    }
+
+    private static List<EDI_DC40> getListToSave(Map<String, EDI_DC40> edidc40Map,
+            List<EDI_DC40> ediDc40MapWithNullForeignKey) {
+
+        List<EDI_DC40> ediDc40List = new ArrayList<>(edidc40Map.values());
+        ediDc40List.addAll(ediDc40MapWithNullForeignKey);
+
+        return ediDc40List;
     }
 }
