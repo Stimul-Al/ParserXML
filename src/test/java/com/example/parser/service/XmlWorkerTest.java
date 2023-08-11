@@ -17,9 +17,9 @@ class XmlWorkerTest {
 
     @Test
     void test() throws IOException {
-        boolean answer = worker.parseAndPush();
+        String answer = worker.parseAndPush();
 
-        Assertions.assertTrue(answer);
+        Assertions.assertNotNull(answer);
     }
 
 }

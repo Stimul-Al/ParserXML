@@ -6,12 +6,13 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "E1WPA01")
+@Table(name = "E1WPA01",
+        indexes = {
+                @Index(name = "FILIALE", columnList = "FILIALE"),
+                @Index(name = "MHDHB", columnList = "MHDHB")})
 public class E1WPA01 {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer Id;
 
+    @Id
     @Column(name = "FILIALE")
     private String FILIALE;
 
@@ -32,7 +33,6 @@ public class E1WPA01 {
 
     @Column(name = "POSME")
     private String POSME;
-
 
     @Column(name = "WARENGR")
     private String WARENGR;
@@ -64,6 +64,6 @@ public class E1WPA01 {
     @Column(name = "LFDNR")
     private String LFDNR;
 
-    @OneToOne(mappedBy = "e1WPA01")
+    @OneToOne(mappedBy = "RCVPRN")
     private EDI_DC40 ediDc40;
 }

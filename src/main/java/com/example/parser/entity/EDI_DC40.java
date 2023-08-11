@@ -8,18 +8,16 @@ import javax.persistence.*;
 @Entity
 @Table(name = "EDI_DC40")
 public class EDI_DC40 {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer Id;
+    @Column(name = "DOCNUM")
+    private String DOCNUM;
 
     @Column(name = "TABNAM")
     private String TABNAM;
 
     @Column(name = "MANDT")
     private String MANDT;
-
-    @Column(name = "DOCNUM")
-    private String DOCNUM;
 
     @Column(name = "DOCREL")
     private String DOCREL;
@@ -51,8 +49,9 @@ public class EDI_DC40 {
     @Column(name = "RCVPRT")
     private String RCVPRT;
 
-    @Column(name = "RCVPRN")
-    private String RCVPRN;
+    @OneToOne
+    @JoinColumn(name = "RCVPRN", referencedColumnName = "FILIALE")
+    private E1WPA01 RCVPRN;
 
     @Column(name = "CREDAT")
     private String CREDAT;
@@ -62,9 +61,5 @@ public class EDI_DC40 {
 
     @Column(name = "SERIAL")
     private String SERIAL;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "e1WPA01_id")
-    private E1WPA01 e1WPA01;
 
 }

@@ -4,6 +4,6 @@ import java.io.IOException;
 
 public interface Worker {
 
-    boolean parseAndPush() throws IOException;
+    String parseAndPush() throws IOException;
 
 }
