@@ -35,7 +35,14 @@ class XmlWorkerTest {
     }
     @Test
     void testFindAll() {
+        long start = System.currentTimeMillis();
+
         List<EDI_DC40> answer = worker.findAllMhdhbLessThan50();
+
+        long finish = System.currentTimeMillis();
+
+        System.out.println("Consumed time for find all elements with `MHDHB` < 50: " + (finish - start) + " millis");
+        System.out.println("Number of Entities : " + answer.size());
 
         Assertions.assertNotNull(answer);
     }
