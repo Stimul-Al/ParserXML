@@ -8,7 +8,7 @@
 * Проект был создан в качестве возможного инструментария для полновесного проектного решения.
 * Созданы сущности [EDI_DC40](src/main/java/com/example/parser/entity/EDI_DC40.java) и [E1WPA01](src/main/java/com/example/parser/entity/E1WPA01.java) со связью `OneToOne`
 * Созданы компонент для парсинга [Parser](src/main/java/com/example/parser/parser/Parser.java) и сервис для работы с данными [Worker](src/main/java/com/example/parser/service/Worker.java)   
-* Созданы [тесты](src/test/java/com/example/parser/service/XmlWorkerTest.java) для проверки производительности.
+* Созданы [тесты для сервиса](src/test/java/com/example/parser/service/XmlWorkerTest.java) и [парсера](src/test/java/com/example/parser/parser/ParserImplTest.java) для проверки производительности.
 
 ### Технологичный стек:
 * Окружение: `Spring-boot`
@@ -19,10 +19,8 @@
 * База данных: `PostgreSQL`
 
 ### Описание работы ParserXML:
-Интерфейс [Parser](src/main/java/com/example/parser/parser/Parser.java) работает с файлом на который получает в качестве аргумента путь, как строку.
+Интерфейс [Parser](src/main/java/com/example/parser/parser/Parser.java) работает с файлом на который получает в качестве аргумента путь, как строку,
 на выходе отдает все сущности, которые сохранил в базу данных.
-
-Реализация метода парсит файл и создает список всех сущностей для дальнейшей работы. 
 
 В интерфейсе [Worker](src/main/java/com/example/parser/service/Worker.java) главным образом схраняется все сущности в базу данных, которые были преобразованы в сущности.
 
