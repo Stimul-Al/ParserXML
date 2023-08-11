@@ -6,10 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "E1WPA01",
-        indexes = {
-                @Index(name = "FILIALE", columnList = "FILIALE"),
-                @Index(name = "MHDHB", columnList = "MHDHB")})
+@Table(name = "E1WPA01", indexes = { @Index(name = "e1wpa01_mhdhb", columnList = "MHDHB") })
 public class E1WPA01 {
 
     @Id

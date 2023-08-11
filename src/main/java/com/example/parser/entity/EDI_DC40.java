@@ -49,7 +49,7 @@ public class EDI_DC40 {
     @Column(name = "RCVPRT")
     private String RCVPRT;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "RCVPRN", referencedColumnName = "FILIALE")
     private E1WPA01 RCVPRN;
 
