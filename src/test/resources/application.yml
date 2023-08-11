@@ -8,9 +8,9 @@ project:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    password: "Fktrctq<f,fitd"
-    url: "jdbc:postgresql://localhost:5432/Parse"
-    username: "aliakseibabashau"
+    password: ${DB_TEST_PASSWORD}
+    url: ${DB_TEST_URL}
+    username: ${DB_TEST_USERNAME}
 
   jpa:
     show-sql: true
